@@ -1,0 +1,1681 @@
+## 编码
+
+1. **数据在磁盘中或者传输中以字节的形式,主要因为字节占用空间比较小**
+2. **数据在内存中以unicode编码存储**
+3. **encode(type) 以type方式(utf-8 gbk等)编码成btype,decode(type)解码,以type方式(utf-8 gbk等)编码**
+
+## 运算符
+
+## 三元表达式
+
+**其实是将原有的结果1放到表达式前面,结果2放在表达式后**
+
+```python
+#结果1 if 判断条件 结果2 ,条件为真 返回结果1,为假 返回结果2
+if '判断条件':
+    '结果1'
+else:
+    '结果2'
+# l0 = ['鸡蛋%s' % i for i in range(10) if i % 2 == 0]列表生成器,列表解析
+# l0是列表,因此会占用内存空间
+# l0 = ('鸡蛋%s' % i for i in range(10) if i % 2 == 0]) 生成器表达式,和for循环一个列表的本质一样,此时的l0是生成器
+l0 = []
+for i in range(10):
+    if i % 2 == 0:
+    	l0.append('鸡蛋%s' % i)
+```
+
+**生成器分为生成器函数(yield),生成器表达式**
+
+
+
+## 递归和迭代(生成器全是迭代器)
+
+**递归即自己调用自己,递归函数内部一定要有退出递归的条件,否则会报错**
+
+### 迭代
+
+#### 迭代器协议:
+
+对象必须提供一个next方法,该方法要么迭代下一项,要么报Stoplteration异常,以终止迭代(只能往下一项走不能后退)
+
+#### 可迭代对象 迭代器对象
+
+迭代器对象:遵循迭代器协议的对象(**迭代器对象要有next()方法**)
+
+**(字符串 列表 元组 字典 集合)这些都是可迭代对象(Iterable),可是不是迭代器对象(Iterator),文件对象两者都是,**只不过在for循环时,调用了字符串这些他们内部的__iter--方法,把他们变成了可迭代对象,然后在for循环调用可迭代对象的--next--方法去取值,而for循环会捕捉StopIteration异常,终止迭代
+
+```python
+l = ['1','2','3','4']
+iter1 = l.__iter__()#调用了内部的__iter__方法,成为迭代器
+print(iter1.__next__()) #'1'
+print(iter1.__next__()) #'2'
+print(iter1.__next__()) #'3'
+print(iter1.__next__()) #'4'
+
+# Iterator Iterable 判断是否为迭代器对象或者可迭代对象
+f = open('housing.csv')
+from collections import Iterator
+from collections import Iterable
+ 
+print(isinstance(f,Iterator))# true
+print(isinstance(f,Iterable))# true
+ 
+'''
+	凡是可作用于for循环的对象都是Iterable类型；
+    凡是可作用于next()函数的对象都是Iterator类型，它们表示一个惰性计算的序列；
+    集合数据类型如list、dict、str等是Iterable但不是Iterator，不过可以通过iter()函数获得一个Iterator对象。
+'''
+```
+
+### 生成器(generator)
+
+#### 创建生成器
+
+##### 法一:
+
+将列表生成器的[]改成()
+
+```python
+list0 = [i+1 for i in range(10)] #列表生成起,list0是一个真实的列表
+list1 = (i+1 for i in range(10)) # 生成器表达式,list1是一个生成器,要通过__next__(),一个一个的获取下一项的值,没有更多的元素时，抛出StopIteration的错误
+
+# Iterator Iterable 判断是否为迭代器对象或者可迭代对象
+f = open('housing.csv')
+from collections import Iterator
+from collections import Iterable
+ 
+print(isinstance(f,Iterator))# true
+print(isinstance(f,Iterable))# true
+```
+
+
+
+##### 法2:
+
+```python
+#生成器函数 yield
+```
+
+​    **凡是可作用于for循环的对象都是Iterable类型；
+​    凡是可作用于next()函数的对象都是Iterator类型，它们表示一个惰性计算的序列；
+​    集合数据类型如list、dict、str等是Iterable但不是Iterator，不过可以通过iter()函数获得一个Iterator对象。**
+
+#### 取生成器值
+
+```python
+list0 = (i for i in range(10))
+#python内置函数 next(),本质是调用__next__()
+print(next(list0))
+# 生成器内部的__next__()方法
+print(list0.__next__())
+# 生成器的send(value)方法,value是传给当前yield的值,即返回了当前yield后,接着运行时该yield的值为value
+print(list0.send(1))
+print(list0.send(None))
+```
+
+
+
+
+
+## 数据类型
+
+### 字符串
+
+#### 字符串逆序
+
+```python
+name = 'abcdeABCDE'
+print(name[-1:0:-1])
+print(name[::-1])#和上句代码一样,都是将name字符串逆序
+```
+
+#### 常用函数
+
+**find,rfind,index,rindex**
+
+```python
+myStr = 'cy'
+myStr.find('c') # 查找并返回字符c的索引,找不到返回-1
+myStr.rfind('c') # 从字符串的右端开始查找并返回字符c的索引,找不到返回-1
+myStr.index('c') # 查找并返回字符c的索引,找不到报错
+myStr.rindex('c') # 从字符串的右端开始查找并返回字符c的索引,找不到报错
+
+```
+
+**strip, split, replace**
+
+**capitalize, title**
+
+```python
+myStr = 'hello cy'
+myStr.capitalize() #将字符串的第一个字母大写
+myStr.title() # 将字符串中每个单词的第一个字母大写
+```
+
+**startswith, endswith**
+
+```python
+myStr = 'hello cy'
+myStr.startswith('hello') # 判断是否以hello开头, 是返回True
+myStr.endswith('cy') # 判断是否以cy结尾, 是返回True
+```
+
+**upper, lower**
+
+```python
+myStr = 'hello cy'
+myStr.upper() # 将全部换成大写
+myStr.lower() # 将全部换成小写
+```
+
+**ljust, rjust, center**
+
+```python
+myStr = 'hello cy'
+myStr.ljust(50) # 左对齐,总的字符串长度为50(原字符串加右边空格)
+myStr.rjust(50) # 右对齐,总的字符串长度为50(原字符串加右边空格)
+myStr.center(50) # 中间对齐,总的字符串长度为50(原字符串加右边空格)
+```
+
+**join**
+
+```python
+l = [1,2,3]
+s = '-'
+s.join(1) # 将l中的元素用s拼接成一个字符串
+```
+
+
+
+​	
+
+### 列表
+
+#### 操作
+
+```python
+#列表增
+names.append() #在列表末尾添加元素,若参数是列表,则表示append的最后一个元素是一个列表类型
+names.insert(1, '1') #在索引为1的位置插入字符1,索引大于1的位置后移
+name3 = name1 + name2 #在列表name1后加上name2的元素
+name2.extend(name3) #将列表name3添加到name2末尾,合成的时一个列表
+#列表的删除
+names.pop() #返回最后一个元素,后并删除最后一个元素
+names.remove('1') #删除的第一个为'1'的元素
+names[::-1] #将names列表的元素逆序,字符串的切片操作同样适用于列表
+del names[2] #删除names的索引为2的元素
+#列表的修改
+names[0] = '0' #将names索引为0的元素改为'0'
+#列表的查
+# 用if ... in names:
+```
+
+**在遍历列表的过程中,不要正在遍历的列表删除元素,因为在遍历的同时删除元素的话,删除元素后面的元素会前移补全删除后留下的空白内存,此时会发生漏删,**
+
+**正确的方法是,遍历时把要删除的元素保存在另一个列表中,遍历完成后,再删除**
+
+
+
+### 字典
+
+#### 操作
+
+```python
+#常用函数
+infor = {'a': 1, 'b':2}
+len(infor) #字典键值对的个数, 2
+infor.keys() #输出字典infor所有key
+infor.values() #输出字典infor所有values
+infor.items() #输出所有的键值对,但是把每一对键值对封装成了一个元组
+infor.get('a')#获取'a'的键值,如'a'不存在默认不输出
+infor.get('a', None) ##获取'a'的键值,如'a'不存在默认输出None
+```
+
+### 集合
+
+1. **set 不允许重复**
+2. **交集并集差集交叉补集等**
+3. **集合中的元素必须是不可变类型**
+4. **集合中的元素是无序的**
+
+#### 特殊操作
+
+```python
+set1 = {11, 22, 33, 44,55,77}
+set2 = {11, 22, 33, 44,55, 66}
+#交集
+set1&set2
+#并集
+set1|set2
+#差集
+set1 - set2
+#交叉补集
+set1 ^ set2
+```
+
+
+
+### 可变类型\不可变类型
+
+**列表 字典 集合是可变类型,不可作为key **
+
+**除了列表 字典之外的类型(字符串类型和元组 字符串 整型等)是不可变类型,可以用来作key**
+
+```python
+A = {(1,2) : 1} #可行,元组不可变(元组不可变,但元组的元素如果是列表字典等,则其中的字典列表仍然可变)
+B = {[1, 2]: 1} #不可行,列表是可变类型
+```
+
+**当可变类型和不可变类型作为参数传入函数时**
+
+```python
+a = 100
+def test(num):
+	num += num
+    print(num)
+test(a)
+print(a)
+'''
+输出结果
+	200
+	100
+100是整型,不可变类型,不能对其修改,因此在传入函数时就会重新定义一个变量
+'''
+a = [100]
+def test(num):
+	num += num
+    print(num)
+test(a)
+print(a)
+'''
+输出结果
+	[100, 100]
+	[100, 100]
+100是列表,可变类型,能对其修改,因此在传入函数时就不会重新定义一个变量
+'''
+```
+
+**python中 a+=a 与 a=a+a的区别(区别仅限于python中,在其他语言中无区别)**
+
+```python
+a = b = [1]
+b = b+b #直接对变量a指向的内存进行操作
+print(a, b)#[1, 1]  [1, 1]
+a = b = [1]
+b = b+b #先将[1] + [1],得到[1, 1]放在一块新的内存中,然后变量b指向这块新的内存
+print(a,b)#[1]   [1, 1]
+```
+
+## 函数
+
+### 参数
+
+#### 不定长参数
+
+```python
+def test(a, b, c=33, *args, **kwargs):
+    print(a, b, c)
+    print(args)
+    print(kwargs)
+test(1, 2, 33, 4, task=6, done=7)
+#输出如下
+#1, 2, 33
+#(4,) 
+#{'task':6, 'done':7}
+
+def test(n):
+    if not n-1:
+        return 1
+   	return n*test(n-1)
+```
+
+#### 参数拆(解)包(元组和列表)
+
+```python
+def test(a, b, c=33, *args, **kwargs):
+    print(a, b, c)
+    print(args)
+    print(kwargs)
+A = (44, 55, 66)
+B = {'task':7, 'done':8}
+test(1, 2, 33, A, B)
+#输出如下:
+#1, 2, 33
+#((44, 55, 66), {'task':7, 'done':8})
+#{}
+test(1, 2, 33, *A, **B)
+#输出如下:
+#1, 2, 33
+#(44, 55, 66) *拆包元组
+#{'task':7, 'done':8} **拆包字典
+```
+
+```python
+'''
+拆包的另一种用法:
+'''
+#拆包的办法取出列表中的第一个和最后一个元素
+a = (i for i in range(100))
+
+b, *c, d = a
+#a 0, b 99
+```
+
+
+
+### 匿名函数
+
+**lambda 参数 : 表达式**
+
+```python
+def tesst(a, b, func):
+    result = func(a, b)
+    print(result)
+test(11, 22, lambda x, y : x + y)
+test(11, 22, lambda x, y : x - y)
+test(11, 22, lambda x, y : x * y)
+```
+
+### 高阶函数
+
+1. **参数或者返回值其中至少有一个是函数**
+
+### 装饰器(本质就是一个接收别的函数作为参数的的函数，当然需要额外参数的要再嵌套一层用于传参)
+
+1. 不能修改作为参数传入的装饰器的函数的源代码
+2. 不能改变作为参数传入的装饰器的函数的调用方式
+
+**装饰器 = 高阶函数 + 函数嵌套 + 闭包**
+
+##### 闭包:
+
+在一个函数内部定义了函数，内部的函数里运用了外函数的临时变量，并且外函数的返回值是内函数的引用。这样就构成了一个闭包。
+
+### 偏函数
+
+**效果与给函数传参数时给一个默认值一样**
+
+```python
+from functools import partial
+
+def int2(a, base=2):
+    return int(a, base)
+partial(int, base=2)# 与上述的函数int2功能一样
+```
+
+### 常用内置函数
+
+#### iter(object[, sentinel])
+
+1. 该函数用来生成迭代器
+
+2. object (支持迭代的集合对象) 
+
+3. 如果第二个参数,则object必须是一个可调用的对象(如 函数等),此时,iter创建的迭代器对象,每次调用这个迭代器对象的__ next_ __()方法时,都会调用第一个参数传入的object对象,直到next方法返回的值与第二个参数相同,此时抛出StopIteration异常
+
+   ```python
+   l = [1, 2, 3, 4]
+   def test():
+       return l.pop()
+   x = iter(test, 3)
+   x.__next__() #1
+   x.__next__() #2
+   x.__next__() #抛出StopIteration异常
+   ```
+
+   
+
+   
+
+## 引用
+
+```python
+'''
+python中只要是赋值都是引用,这是python中的数据结构
+'''
+a = 100 # 有一个内存存放的数据为100, 变量a指向该内存
+b = a # b指向a所指向的同一个内存
+A = [1]
+B = A
+print(A, B) 
+A.append(2) #A指向的内存存放的列表数据添加元素,故同样指向该内存的B也会同时改变
+print(A, B)
+A = [2] # 有一个新的内存存放的数据为列表[2], 变量a指向该内存,而不指向之前存放列表[1]的那块内存
+A.append(3)
+print(A, B)#A指向了存放的数据为列表[2]的内存,B依然指向了存放的数据为列表[1]的内存
+
+```
+
+## 文件 文件夹操作
+
+### 文件读写方式
+
+```python
+f = open('1.txt', 'w+')
+f.read() #将文件一次性读取到内存中去,可将参数,如f.read(1024),每次读取1024个字节,不写参数默认全部读取,此时要注意如果文件特别大,就不能用read读取
+f.seek(0,0) #将f指向文件开头,seek(),第一个参数表示偏移量(python中只能是正数,不支持负数),第二个参数,0表示从文件头偏移,1表示从当前位置偏移,2表示从文件尾偏移
+f.readlines() #把文件全读取出来,每读一行将改行当做一个元素放到列表中,返回值是一个列表,如果文件特别大,也不能用readlines读取
+f.readline() #一次读取一行
+position = f.tell() # 获取当前f指向文件中的位置
+f.close()
+```
+
+### 文件夹
+
+```python
+import os
+os.rename(oldname, newname)#重命名
+os.remove(filename) # 删除文件
+os.getcwd() # 获取当前的绝对路径
+os.mkdir(pathname) # 在当前目录创建一级文件夹
+os.makedirs(pathname) # 创建多级文件夹 该pathname为绝对路径
+os.chdir(pathname) # 将当前的路径改为pathname
+files = os.listdir(pathname) # 返回pathname下的文件,得到的是一个列表
+os.rmdir(pathname) #删除pathname
+```
+
+## 类
+
+### 对象
+
+### 内置方法
+
+#### new init del
+
+```python
+class A:
+	def __new__(self):
+        print('创建对象时调用,用于创建对象')
+    def __init__(self):
+        print('对象初始化函数,对象创建后自动调用用于初始化创建的对象')
+        
+    def __str__(self):
+        print('当直接调用该类时调用')
+    	'''
+    	如 
+        a = A()
+        print(a)# 此时会调用__str__方法 
+    	'''
+        
+    def __del__(self):
+        print('类似c++中类的析构函数,当创建该类对象的内存被释放时调用')
+```
+
+### 类属性 对象属性 静态属性
+
+```
+class Tool(object):
+    num = 0 #类属性 类属性为所有该类的对象共享，只在创建时初始化一次
+    def __int__(self, name):
+    	self.name = name # self.name 对象属性 为该对象独享
+```
+
+```python
+class A(object):
+    num = 0
+a0 = A()
+a1 = A()
+print(a0.num, a1.num, A.num) # 0 0 0 
+a0.num += 1
+print(a0.num, a1.num, A.num) # 1 0 0 
+A.num = 4
+print(a0.num, a1.num, A.num) # 1 4 4
+a1.num += 2
+print(a0.num, a1.num, A.num) # 1 6 4
+A.num += 3
+print(a0.num, a1.num, A.num) # 1 6 7
+'''
+当调用对象的属性时,若该对象之前没有这个属性,则会找该对象的类属性是否有该属性,如果有,则会创建对象属性后并指向类属性的值
+'''
+```
+
+**静态属性**
+
+在函数前加`@property`，将函数逻辑”封装“成数据属性，外部直接调用函数名，如同调用属性一样。该函数是可以调用对象和类的属性的。
+
+### 类方法 对象方法 静态方法
+
+```python
+class Game(object):
+    num = 0
+    # 对象方法
+    def __init__(self):
+        self.name = 'name'
+    @classmethod# 类方法
+    def add_num(cls):
+        cls.num = 100
+    @staticmethod
+    def print_hello():
+        print('hello')
+        
+game = Game()
+Game.add_num() # 通过类名和对象名都可以调用类方法,但是即使用对象名,此时的对象也是指向类本身,而不是对象
+#game.add_num()
+Game.print_hello()
+#game.print_hello()
+print(Game.num)
+'''
+类方法和静态方法都可以通过类名和对象名调用
+对象方法和实例方法在定义时都必须要有至少一个参数,类方法第一个参数为指代类,实例方法第一个参数指代该对象实例
+静态方法可以无参数
+'''
+```
+
+### 在子类中调用父类方法
+
+```python
+class A(object):
+    def __init__(self, *args, **kwargs):
+        #object.__init__(self, *args, **kwargs)
+        #super(A, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+```
+
+
+
+### 单利模式
+
+```python
+# 通过__new__方法创建单例模式，也有几种创建的形式，各种形式略有差异
+'''
+法一： 用hasattr函数 判断是否存在属性_instance,
+		切记，该法只能是受保护的_instance属性，而不能是__instance属性
+坑：
+	该法创建的单例，无论有多少个子类继承于该单例，都永远只有一个实例，即第一次调用该单例类创建对象时创建的实例对象(如果第一次是调用子类创建的对象，则之后创建的实例全是上述调用的那个对象)；
+	每次实例化单例类，都会调用init函数
+'''
+class Singleton(object):
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, '_instance'):
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    def __init__(self):
+        print('Singleton init ...')
+
+class A(Singleton):
+    pass
+
+class B(Singleton):
+    pass
+
+s1 = Singleton()
+s2 = Singleton()
+
+print(id(s1), s1) #3143856 <__main__.Singleton object at 0x002FF8B0>
+print(id(s2), s2) #3143856 <__main__.Singleton object at 0x002FF8B0>
+
+a = A()
+b = B()
+print(id(a), a)#3143856 <__main__.Singleton object at 0x002FF8B0>
+print(id(b), b)#3143856 <__main__.Singleton object at 0x002FF8B0>
+'''
+法二：
+	用if判断时候类属性__instance是否为None
+坑：
+	和上述方法一样
+'''
+class Singleton(object):
+    __instance = None
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance == None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+
+class A(Singleton):
+    pass
+
+class B(Singleton):
+    pass
+
+s1 = Singleton()
+s2 = Singleton()
+
+print(id(s1), s1) #57812720 <__main__.Singleton object at 0x037226F0>
+print(id(s2), s2) #57812720 <__main__.Singleton object at 0x037226F0>
+
+a = A()
+b = B()
+print(id(a), a)#57812720 <__main__.Singleton object at 0x037226F0>
+print(id(b), b)#57812720 <__main__.Singleton object at 0x037226F0>
+```
+
+## 模块
+
+### 特殊变量(函数 文件)
+
+#### --all--
+
+```python
+# 模块(.py文件)中 __all__变量列表中的元素,才能被别的模块调用, 若没有写明__all__变量,默认全部都可以被别的模块调用
+__all__ = ["test1", "test2"] 
+
+def test1():
+    pass
+def test2():
+    pass
+def test3():
+    pass
+def test4():
+    pass
+'''
+如果__all__变量是在包的__init__.py文件中,则此时其中的元素表示有哪些模块可以被自身这个包外的别的包调用
+'''
+```
+
+#### --init--文件
+
+```python
+'''
+有__init__.py文件存在的文件夹,是python的包
+在通过import python的包时,会先调用__init__.py文件,该文件默认是空文件,没有内容
+'''
+```
+
+### 模块的安装和发布(将自己写好的python包改成安装包进行发布和安装)
+
+### 内置模块
+
+#### logging
+
+```python
+import logging
+logging.basicConfig(
+	level=log_level,#日志水平
+    filename='1.log',#日志名字
+    filemode='a',#打开日志文件的方式 w a等
+    format='%(asctime)s %(filename)s',#日志的输出格式和内容
+    datefmt='%a, %d %b %Y %H:%M:%S',#指定时间格式
+    stream: 指定将日志的输出流，可以指定输出到sys.stderr,sys.stdout或者文件，默认输出到sys.stderr，当stream和filename同时指定时，stream被忽略
+)
+```
+
+#### re json pickle 
+
+#### configparse
+
+#### time random
+
+#### hashlib(md5文件校验)
+
+#### os sys subprocess
+
+#### struct
+
+```python
+import struct
+l = struct.pack('i', 213)#将213按整型转成bytes的字符串
+print(len(l))
+x = struct.unpack('i', l)#将bytes按整型转成213
+print(x)
+
+```
+
+#### select
+
+```python
+'''
+select.select模块其实主要就是要理解它的参数, 以及其三个返回值。
+select()方法接收并监控3个通信列表， 
+第一个是所有的输入的data,就是指外部发过来的数据,所有连接进来的对象都必须要进inputs里一份，
+第2个是监控和接收所有要发出去的data(outgoing data),
+第3个监控错误信息
+readable, writable, exceptional = select.select(inputs, outputs, inputs)
+
+它返回3个新的list，我们上面将他们分别赋值为readable,writable,exceptional, 
+所有在readable list中的socket连接代表有数据可接收(recv),
+所有在writable list中的存放着你可以对其进行发送(send)操作的socket连接，
+当连接通信出现error时会把error写到exceptional列表中。
+'''
+
+# server.py
+#
+#
+import select
+import socket
+from queue import Queue
+from time import sleep
+
+# Create a TCP/IP
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setblocking(False)
+
+# Bind the socket to the port
+server_address = ('localhost', 8090)
+print('starting up on %s port %s' % server_address)
+server.bind(server_address)
+
+# Listen for incoming connections
+server.listen(5)
+
+# Sockets from which we expect to read
+inputs = [server]
+
+# Sockets to which we expect to write
+# 处理要发送的消息
+outputs = []
+
+# Outgoing message queues (socket: Queue)
+message_queues = {}
+
+while inputs:
+    # Wait for at least one of the sockets to be ready for processing
+    print('waiting for the next event')
+    # 开始select 监听, 对input_list 中的服务器端server 进行监听
+    # 一旦调用socket的send, recv函数，将会再次调用此模块
+    readable, writable, exceptional = select.select(inputs, outputs, inputs)
+
+    # Handle inputs
+    # 循环判断是否有客户端连接进来, 当有客户端连接进来时select 将触发
+    for s in readable:
+        # 判断当前触发的是不是服务端对象, 当触发的对象是服务端对象时,说明有新客户端连接进来了
+        # 表示有新用户来连接
+
+        client_address = None
+
+        if s is server:
+            # A "readable" socket is ready to accept a connection
+            connection, client_address = s.accept()
+            print('connection from', client_address)
+            # this is connection not server
+            connection.setblocking(0)
+            # 将客户端对象也加入到监听的列表中, 当客户端发送消息时 select 将触发
+            inputs.append(connection)
+
+            # Give the connection a queue for data we want to send
+            # 为连接的客户端单独创建一个消息队列，用来保存客户端发送的消息
+            message_queues[connection] = Queue()
+        else:
+            # 有老用户发消息, 处理接受
+            # 由于客户端连接进来时服务端接收客户端连接请求，将客户端加入到了监听列表中(input_list), 客户端发送消息将触发
+            # 所以判断是否是客户端对象触发
+            data = s.recv(1024)
+            # 客户端未断开
+            if data != b'':
+                # A readable client socket has data
+                print('received "%s" from %s' % (data, s.getpeername()))
+                # 将收到的消息放入到相对应的socket客户端的消息队列中
+                message_queues[s].put(data)
+                # Add output channel for response
+                # 将需要进行回复操作socket放到output 列表中, 让select监听
+                if s not in outputs:
+                    outputs.append(s)
+            else:
+                # 客户端断开了连接, 将客户端的监听从input列表中移除
+                # Interpret empty result as closed connection
+                print('closing', client_address)
+                # Stop listening for input on the connection
+                if s in outputs:
+                    outputs.remove(s)
+                inputs.remove(s)
+                s.close()
+
+                # Remove message queue
+                # 移除对应socket客户端对象的消息队列
+                del message_queues[s]
+
+    # Handle outputs
+    # 如果现在没有客户端请求, 也没有客户端发送消息时, 开始对发送消息列表进行处理, 是否需要发送消息
+    # 存储哪个客户端发送过消息
+    for s in writable:
+        try:
+            # 如果消息队列中有消息,从消息队列中获取要发送的消息
+            message_queue = message_queues.get(s)
+            send_data = ''
+            if message_queue is not None:
+                send_data = message_queue.get_nowait()
+            else:
+                # 客户端连接断开了
+                print("has closed ")
+        except Queue.empty():
+            # 客户端连接断开了
+            print("%s" % (s.getpeername()))
+            outputs.remove(s)
+        else:
+            # print "sending %s to %s " % (send_data, s.getpeername)
+            # print "send something"
+            if message_queue is not None:
+                s.send(send_data)
+            else:
+                print("has closed ")
+            # del message_queues[s]
+            # writable.remove(s)
+            # print "Client %s disconnected" % (client_address)
+
+    # # Handle "exceptional conditions"
+    # 处理异常的情况
+    for s in exceptional:
+        print('exception condition on', s.getpeername())
+        # Stop listening for input on the connection
+        inputs.remove(s)
+        if s in outputs:
+            outputs.remove(s)
+        s.close()
+
+        # Remove message queue
+        del message_queues[s]
+
+    sleep(1)
+
+```
+
+
+
+
+
+#### optparse
+
+```python
+import optparse
+
+usage = '''
+README.txt 
+该字符串，是在解析参数报错时候，打印出来的信息，大多是为了提示错误
+'''
+
+parser = optparse.OptionParser(usage)
+
+'''
+-p 短参数
+--port 长参数 ，长短参数必须要有一即可
+type 参数值的数据类型
+default 默认值
+help 对应参数的解释
+dest 该参数的别名，在parse_options解析时，字典的字段名以dest为先，没有dest的值，字段名才为长短参数
+action: 用于控制对选项和参数的处理,像无参数选项处理,可以设置为以下几种字符串:
+        "store": 储存值到 dest 指定的属性,强制要求后面提供参数;
+        "store_true": 当使用该选项时,后面的 dest 将设置为 true, 不跟参数.
+        "store_false": 当使用该选项时,后面的 dest 将设置为 false. 常配合另一个 "store_true" 的选项使用同一个 dest 时使用. 不跟参数.
+        "append": 储存值到 dest 指定的属性,并且是以数组的形式, 必须跟参数.
+        "store_const": 用来存储参数为 const 设置的值到 dest 指定的属性当中.常用于 dest 为同名2个以上选项时的处理. 不跟参数.
+        "append_const": 用来存储参数为 const 设置的数组到 dest 指定的属性当中. 不跟参数.
+        "count": 使用后将给储存值到 dest 指定的属性值加1,可以统计参数中出现次数.用途不大. 不跟参数.
+        "callback": 后面指定回调函数名(不加括号),会将相应opt和args传给回调函数.
+        "help", "version": 对应为帮助和版本. 要另外自己设计时使用.
+        
+        当 action 设置为 store_ture / store_false 时, 解析参数时, 如果有值时为 Ture / False, 没有值时为 None.
+    当 dest 相同时, 一个 action 设置为 store_false, 另一个 action 设置为 store_ture 时, 解析参数时,以在后面出现的为准.
+'''
+help = "The port to listen on. Default to a random available port."
+parser.add_option('-p', '--port', type='int', help=help, default=8888, dest='Port')
+
+help = "The interface to listen on. Default is localhost."
+parser.add_option('-i', '--iface', help=help, default='localhost')
+
+help = "The number of seconds between sending bytes."
+parser.add_option('--delay', type='float', help=help, default=.7)
+
+help = "The number of bytes to send at a time."
+parser.add_option('--num-bytes', type='int', help=help, default=10)
+
+parser.add_option('-f', type='string', default='filename')
+parser.add_option('-v', help='version', action="store_false", default='hello')
+
+# 剖析并返回一个字典和列表
+# 字典中的关键字是所有add_option()函数中的长参数或dest值
+# 列表中是除了上述设置中的option外的参数，可能为空
+fakeArgs = ['-p', '8888', '-f', 'file.txt', '-v', 'how are you', 'arg1', 'arg2']
+options, args = parser.parse_args(fakeArgs)
+print('options:', options)
+print('args:', args)
+
+
+```
+
+#### collections 集合
+
+##### collections.deque(maxlen=N)
+
+创建一个固定大小N的队列，不传参则大小不固定。当新的元素加入并且该队列已满时，最老的元素会被自动移除
+
+##### collections.defaultdict()
+
+构造值为列表的字典，
+
+defaultdict的特性：可以自动的初始化每个key刚开始对应的值为空列表
+
+```python
+d = defaultdict(list)
+for key, value in pairs:
+    d[key].append(value)
+```
+
+##### collections.OrderedDict()
+
+可创建一个字典，并且在迭代或者序列化这个字典的时候能够控制元素的顺序，
+
+```python
+OrderedDict内部维护这一个根据键插入顺序排序的双向链表，但一个OrderedDict的大小是普通字典的两倍，因为它内部维护着另一条，链表
+
+from collections import OrderedDict
+d = OrderedDict()
+d['a'] = 1
+d['b'] = 2
+d['c'] = 3
+d['d'] = 4
+
+for key in d:
+    print(key, d[key])
+    
+```
+
+##### collections.Counter()
+
+该类对象就是一个字典，value为次数
+
+```python
+words = [
+    'look', 'into', 'my', 'eyes', 'look', 'into', 'my', 'eyes',
+    'the', 'eyes', 'the', 'eyes', 'the', 'eyes', 'not', 'around', 'the',
+    'eyes', "don't", 'look', 'around', 'the', 'eyes', 'look', 'into',
+    'my', 'eyes', "you're", 'under'
+]
+from collections import Counter
+word_counts = Counter(words)
+
+# 找出频率最高的三个词
+top_three = word_counts.most_common(3)
+print(top_three)
+```
+
+
+
+
+
+
+
+#### heapq 堆
+
+##### heapq.nlargest(n, iterable, key=None)
+
+##### heapq.nsmallest(n, iterable, key=None) 当n的大小接近iterable大小时，通常进行如下操作能更快筛选，sorted(iterable)[:n]最小的n个， sorted(iterable)[-n：]最大的n个
+
+
+
+
+
+
+
+## 生成式
+
+### 列表生成式
+
+```python
+a = [i for i in range(10)]# 生成列表a[1, 2, 3..., 9]
+#列表中的元素值取决于列表生成式中要放入列表的变量,for循环只是控制元素个数
+b = [11 for i in range(5)] # [11, 11, 11, 11, 11]
+c = [i for i in range(10) if i%2==0] # [0, 2, 4, 6, 8]
+d = [i for i in range(3) for j in range(2)] # [0,0,1,1,2,2]
+e = [(i, j) for i in range(3) for j in range(2)] # [(0,0),(0,1),(1,0),(1,1),(2,0),(2,1)]
+```
+
+## socket
+
+### tcp
+
+#### 粘包
+
+**只有tcp有粘包现象,udp没有该现象,因为udp中发一次只收一次,就算数据一次没接收完,接收不到的数据就丢掉**
+
+#### 粘包解决方法:
+
+思路:想办法让接收端知道该什么时候结束当前接收的数据.
+
+1. 可以在发送时,先发送要发送消息的长度给接收端**(可用struct.pack struct.unpack)**
+
+### socketserver
+
+**内置的socket多线程处理模块**
+
+
+
+### udp
+
+## 进程 线程 同步 异步 
+
+1. 进程是资源分配的最小单位,开进程是相对比较耗资源的
+2. 线程是程序执行的最小单位
+
+**python中由于GIL(全局解释锁)的存在,同一时刻,cpu不能执行多个线程任务,即python中的多线程执行,其实是当前线程在执行过程中,遇到了IO操作等需要等待的时候,cpu切换到别的线程去执行(切换的太过于频繁时就非常耗时间),**
+
+### 计算密集型 vs. IO密集型
+
+1. 计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。
+2. IO密集型任务执行期间，大多时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。
+
+### setDaemon()
+
+1. **要在start之前调用**
+2. 该函数作用: 在主线程退出时,不论子线程是否运行完成,都会随着主线程被动的终止执行
+
+### 进程
+
+**from multiprocessing import process**
+
+**和线程类似,除了调用的库不一样,其他的创建方法和常用方法都一样**
+
+**不过daemon在线程中是一个属性,而不是方法**
+
+```python
+from multiprocessing import process
+def func(a):
+    pass
+
+p_l = []
+for i in range(10):
+    p = process(target=func, args=(a,))
+    p.start()
+for i in p_l:
+    p.join()
+```
+
+### 进程池pool
+
+**from multiprocessing import Pool**
+
+```python
+from multiprocessing import Pool
+
+def func():
+	
+```
+
+### 多线程+协程(同样是处理IO密集型)
+
+#### 协程(实质还是通过最底层的yeild实现的,本质是一个线程,而不是多线程)
+
+1.  通过**yeild**
+2. 使用**greenlet**(from greenlet import greenlet)
+3. **gevent**,表层主要就是调用gevent
+4. 协程没有切换的消耗
+5. 不需要锁的概念
+
+##### gevent
+
+从语法上看，协程和生成器类似，都是定义体中包含yeild关键字的函数，
+yield在协程中的用法:
+
+1. 协程中yield通常出现在表达式的右边,例如 sum = yield r, 可以产出值,也可以不产出,如果yield后没有表达式,则生成器产出None
+2. 协程可以从调用方接收数据,调用方时通过send(sum)的方式把数据提供给协程用,而不是使用next(...)函数,通常调用方会把值推送给协程
+3. 协程可以把控制器让给中心调度程序,从而激活其他协程
+4. 所以总体上在协程中把yield看做是控制流程的方式
+5. **协程函数写好后,在调用时,要先使用next(coroutine_name)或者send(None)将协程启动(称为 预激协程,即让协程向前执行到第一个yield表达式),启动后会停在yield那里,此时才能通过send发送真正的数据**
+
+```python
+def consumer():
+	r =''
+	while True:
+		n = yield r
+		if not n:
+			return 
+		print('[CONSUMER] Consuming %s...' % n)
+		r = '200 ok'
+
+def produce(c):
+    '''
+    当运行协程启动后,会先在计算yield右侧的表达式,并返回,右侧没有表达式则返回None,并不会给yield左边,直到再次调用send发送数据给协程,才会将发送的数据赋值给yield左侧,
+    当程序运行到协程定义体的末尾时和用生成器的时候一样会抛出StopIteration异常
+    '''
+	c.send(None)#next(c) 调用send或者next启动协程
+	n = 0
+	while n < 5:
+		n = n + 1
+		print('[PRODUCER] Producing %s...' % n)
+		r = c.send(n)
+		prinf('[PRODUCER Consumer return : %s]' % r)
+	c.close()
+
+c = consumer()
+produce(c)
+```
+
+6. 在使用协程时,必须要预激协程,否则协程将无法使用,有一种预激协程的装饰器
+
+```python
+from functools import wraps
+
+def coroutine(func):
+    @wraps(func)
+    def primer(*args, **kwargs):
+        gen = func(*args, **kwargs)
+        next(gen)
+        return gen
+    return primer
+
+@coroutine
+def averager():
+    total = 0.0
+    count = 0
+    average = None
+    while True:
+        term = yield average
+        total += trem
+        count += 1
+        average = total/count
+        
+coro_avg = average()
+from inspect import getgeneratorstate
+print(getgeneratorstate(coro_avg))
+print(coro_avg.send(10))
+print(coro_avg.send(30))
+print(coro_avg.send(5))
+```
+
+
+
+
+
+### 进程间通信
+
+**进程队列和pipe管道这两种方式,只是实现了进程的通信,进程a把另进程b的数据复制到a的内存上,然后两个进程中的该数据具有某种映射关系,Managers才实现了进程之间的数据共享,即一个进程可以去更改另一个进程的数据**
+
+#### 1. 进程队列(multiprocessing.Queue())
+
+#### 2. pipe双向管道
+
+#### 3. Managers
+
+## (全是对线程而言)锁 信号量 队列
+
+### 锁
+
+#### 同步锁(互斥锁)
+
+1. 获得锁,使用后必须释放,否则阻塞
+2. **threading.Lock()**
+
+#### 递归锁
+
+1. 获得锁后,在没有释放前只有当前获得锁的线程能够使用锁,其他线程会阻塞到获得锁的地方
+2. 在已经获得锁的线程内,有几次获得锁,必须要有几次释放,否则该锁就释放不了,仍然被当前线程使用
+
+ ### Condition() 同步条件锁
+
+**threading.Condition()类似threading.Lock()**
+
+```python
+'''
+	acquire：上锁。
+    release：解锁。
+    wait：将当前线程处于等待状态，并且会释放锁。可以被其他线程使用notify和notify_all函数唤醒。被唤醒后会继续等待上锁，上锁后继续执行下面的代码。
+    notify：通知某个正在等待的线程，默认是第1个等待的线程。
+    notify_all：通知所有正在等待的线程。notify和notify_all不会释放锁。并且需要在release之前调用。
+'''
+import threading, random, time
+
+gMoney = 1000
+gCondition = threading.Condition()
+gTimes = 0
+
+class Producer(threading.Thread):
+    def run(self):
+        global gMoney
+        global gCondition
+        global gTimes
+        
+        while True:
+            gCondition.acquire()
+            money = random.randint(100, 1000)
+            if gTimes >= 10:
+                gCondition.release()
+                print('当前生产者总共生产了 %s 次'%gTimes)
+                return
+            gMoney += money
+            print('%s 当前存入 %s 元钱，剩余 % s元钱' % (threading.current_thread(), money, gMoney))
+            gTimes += 1
+            gCondition.notify_all()
+            time.sleep(0.5)
+            gCondition.release()
+    
+class Consumer(threading.Thread):
+    def run(self):
+        global gMoney
+        global gCondition
+        global gTimes
+        
+        while True:
+            gCondition.acquire()
+            money = random.randint(100, 1000)
+            while gMoney < money:
+                if gTimes >= 10:
+                    gCondition.release()
+                    return
+                print('%s 准备取 %s 元钱，剩余 %s 元钱，不足！'%(threading.current_thread(),money,gMoney))
+                gCondition.wait()
+                print(gMoney, money)
+            gMoney -= money
+            print('%s 当前取出 %s 元钱，剩余 %s 元钱' % (threading.current_thread(), money, gMoney))
+            time.sleep(0.5)
+            gCondition.release()
+
+def main():
+    for x in range(5):
+        Consumer(name='消费者线程%d'%x).start()
+
+    for x in range(2):
+        Producer(name='生产者线程%d'%x).start()
+
+if __name__ == '__main__':
+    main()
+```
+
+
+
+### 线程的同步事件
+
+```python
+# 创建event对象,一个event可以用到多个线程中去
+event = threading.Event()
+# 等待flag标示被设定,未设定时阻塞在wait处,被设定后就可以往下运行
+event.wait()
+# 设定flag标示
+event.set()
+# 清空flag设定
+event.clear()
+```
+
+### 信号量(Semphore)
+
+```python
+import threading, time
+class myThread(threading.Thread):
+    def run(self):
+        if semaphore.acquire():
+            print(self.name)
+            time.sleep(5)
+            semaphore.release()
+   
+if __name__ == '__main__':
+    semaphore = threading.Semaphore()
+    threads = []
+    for i in range(100):
+        threads.append(myThread())
+        
+    for t in threads:
+        t.start()
+```
+
+### 线程队列(Queue,一般只用在多线程)
+
+#### queue.Queue(先进先出FIFO)
+
+```python
+from queue import Queue
+q1 = Queue(100) #创建队列对象,容量为100,可以不写容量
+q1.empty() # 判断队列是否为空
+q1.full() # 判断队列是否满了
+q1.put(10)
+q1.get() # put（放一个元素进队列） get（从队列中取出一个元素） 先进先出原则
+q1.put_nowait(1) # 立即放入一个元素,不等待 ,put时如果满了,不阻塞,而是报错,相当于q1.put(block=False)
+q1.get_nowait()	# 立即取出一个元素,不等待,get时如果是空,不阻塞报错,相当于q1.get(block=False)
+q1.qsize() # 返回队列中的所有元素个数
+
+q1.task_done() # 在完成一项工作后,该函数会向任务已完成的队列发送一个信号,与join配对使用,
+q1.join() # 阻塞调用线程,直到队列中的所有任务被处理掉,
+```
+
+#### queue.LifoQueue(先进后出LIFO)
+
+#### queue.PriorityQueue()
+
+**按照优先级get**
+
+```python
+from queue import PriorityQueue
+q = PriorityQueue()
+q.put([2, 'b'])
+q.put([5, 'e'])
+q.put([4, 'd'])#put是传入列表,2 4 表示优先级,后面的才是数据,2优先级高,get是先出
+data = q.get() # [2, 'b'] [5, 'e'] [4, 'd']
+data[2] # b
+```
+## 常用符号及 拾遗
+
+1. **->**， 
+
+   a. 为函数添加`元数据`,描述函数的返回类型
+
+   b. 标记返回函数注释,信息作为`.__annotations__`属性提供,`__annotations__`属性是字典。键`return`是用于在箭头后检索值的键
+
+   c. 示例
+
+   ```python
+   # 描述函数的返回类型
+   def test1(x, y) -> int:
+       return x+y
+   # 描述函数的返回类型
+   def test2(x, y) -> '返回两数之和':
+       return x+y
+   print(test2.__annotations__) # {'return': '返回两数之和'}
+   ```
+
+2. **Union**类型， 
+
+   Union 是当有多种可能的数据类型时使用，比如函数有可能根据不同情况有时返回str或返回list，那么就可以写成Union[list, str]
+   Optional 是Union的一个简化， 当 数据类型中有可能是None时，比如有可能是str也有可能是None，则Optional[str], 相当于Union[str, None]. **注意** 和 函数有默认参数None有区别，有区别，有区别，不可省略默认参数，如下示例：
+
+   ```python
+   原始：def func(args = None):
+   错：def func(args:Optional[str]) -> None:
+   对：def func(args:Optional[str] = None) -> None:
+   ```
+
+3. 参数中 **:**的使用
+
+   ```python
+   class A(object):
+       def __init__(
+           self,
+           handlers: list = None,
+           default_host: str = None,
+           transforms: dict = None,
+           **settings: Any
+       ):
+           pass
+   ```
+
+   
+
+## py项目打包成类库(python3.5)
+
+将python项目打包成类库,供其他项目下载安装,import即可使用
+
+### 打包方法
+
+1. 在项目下建立文件setup.py(源码如下:)
+
+   ```python
+   from distutils.core import setup
+   import setuptools
+   
+   setup(name='App',  # 包名称
+         version='1.0',  # 版本号
+         description='test',  # 程序的简单描述
+         author='cy',  # 作者
+         author_email='1234562163.com',
+         url='',  # 包的下载地址
+         package_dir='',  # 源码所在的目录
+         packages=setuptools.find_packages(),  # 源码目录下有哪些目录要打包 ,
+   
+         # py_modules=[''],  # 需要打包的py文件列表
+         install_requires=[
+             'pywin32',
+             'requests',
+             'pillow',
+             'PyAutoIt',
+             'pyperclip',
+         ],  # 依赖的模块
+   
+         classifiers=[
+             'Development Status :: 4 - Beta',
+             'Operating System :: Microsoft'  # 你的操作系统
+             'Intended Audience :: Developers',
+             'License :: OSI Approved :: BSD License',
+             'Programming Language :: Python',  # 支持的python版本
+             'Programming Language :: Python :: 3',
+             'Programming Language :: Python :: 3.4',
+             'Programming Language :: Python :: 3.5',
+             'Programming Language :: Python :: 3.6',
+             'Topic :: Software Development :: Libraries'
+         ],  # 可不要
+         zip_safe=True,  # 可不要
+         )
+   
+   ```
+
+2. 保存后,运行命令 python3 setup.py sdist
+
+   会在同级目录下生成一个dist文件夹,里面是churn1.0.tar.gz文件
+
+3. 之后将该包放到新的环境下,解压通过命令 python3 setup.py install --record file.txt, 其中file.txt中会记录安装路径,便于之后的卸载
+
+4. 这之后，便会将该包安装到/usr/local/lib/python3.5/dis-packages/xgb.py,打包的其他文件同理（具体安装路径可以看上面生成的file.txt）
+
+5. 卸载方法
+
+   cat file.txt | xargs rm -rf 删除这些文件
+
+附：
+
+setup函数各参数详解：
+>>python setup.py --help
+>>  --name              包名称
+>>  --version (-V)      包版本
+>>  --author            程序的作者
+>>  --author_email      程序的作者的邮箱地址
+>>  --maintainer        维护者
+>>  --maintainer_email  维护者的邮箱地址
+>>  --url               程序的官网地址
+>>  --license           程序的授权信息
+>>  --description       程序的简单描述
+>>  --long_description  程序的详细描述
+>>  --platforms         程序适用的软件平台列表
+>>  --classifiers       程序的所属分类列表
+>>  --keywords          程序的关键字列表
+>>  --packages  需要打包的目录列表
+>>  --py_modules  需要打包的python文件列表
+>>  --download_url  程序的下载地址
+>>  --cmdclass  
+>>  --data_files  打包时需要打包的数据文件，如图片，配置文件等
+>>  --scripts  安装时需要执行的脚步列表
+
+setup.py打包命令各参数详解：
+>>python setup.py --help-commands
+>>  --python setup.py build     # 仅编译不安装
+>>  --python setup.py install    #安装到python安装目录的lib下
+>>  --python setup.py sdist      #生成压缩包(zip/tar.gz)
+>>  --python setup.py bdist_wininst  #生成NT平台安装包(.exe)
+>>  --python setup.py bdist_rpm #生成rpm包
+
+# 反射机制
+
+**反射的核心本质是，利用字符串的形式去对象(模块)中操作(查找/获取/删除/调价)成员，一种基于字符串的事件驱动**
+
+```python
+# getattr(object, ‘str’) 获取模块或者类中的str对应的方法或者属性 
+
+# 自定义的模块commons
+def login():
+    print("这是一个登陆页面！")
+ 
+ 
+def logout():
+    print("这是一个退出页面！")
+ 
+ 
+def home():
+    print("这是网站主页面！")
+
+# 自定义的入口
+import commons
+ 
+def run():
+    inp = input("请输入您想访问页面的url：  ").strip()
+    if hasattr(commons,inp):
+        func = getattr(commons,inp)
+        func()
+    else:
+        print("404")
+ 
+if __name__ == '__main__':
+    run()
+```
+
+# 进阶
+## python的执行原理
+### 解释性语言与编译性语言
+
+#### 场景
+
+计算机不能直接理解高级语言，只能理解和运行及其语言，所以必须要把高级语言翻译成机器语言，计算机才能运行高级语言程序。
+
+#### 编译性语言
+
+##### 定义
+
+程序在执行之前会进行 预处理 -> 汇编 ->编译 -> 链接（以c++为例）过程，编译生成机器语言文件。运行时不需要重新编译，直接使用编译生成的机器语言文件即可。执行效率高，但是要依赖编辑器，跨平台性差一些。
+
+#### 解释性语言
+
+##### 定义
+
+不需要编译，在运行时才翻译成机器语言，每次执行都要翻译一遍，效率低。在运行时翻译，有对应的专门解释器去翻译，每句都是执行时才翻译，效率低，依赖解释器，跨平台性好。
+
+#### java
+
+java基于java虚拟机，可以说是一种先编译后解释的语言。先通过编译器将其编译成字节码文件，然后在运行时通过解释器将字节码文件解析成机器文件。
+
+#### python
+
+python是一门解释性语言，基于java解释器，但是出于效率考虑，也提供了一种编译方法。编译后得到pyc文件（二级制文件），其中存储了字节码，然后再将字节码转成机器语言运行。故python和java、c#相似，都是先编译再解释的语言。
+
+##### pyc文件和PyCodeObject
+
+字节码在python虚拟机程序里对应的是PyCodeObject对象，pyc文件是字节码在磁盘上的表现形式。PyCodeObject对象的创建时机是模块加载的时候，即import
+
+在PyCodeObject中，当python程序结束运行时（真的是在程序结束时吗？），解释器会将PyCodeObject写回到pyc文件中。当第二次运行时，首先会在硬盘中找pyc文件，对比pyc文件和py文件的差异，如没有改变则直接载入pyc文件，有改变则重新编译生成pyc文件。所以可以说，pyc文件其实是对PyCodeObject的一种持久化保存方式。
+
+##### 注意点
+
+- `1、import过的文件才会自动生成 pyc文件。`Python解释器认为，只有import进行的模块才需要被重用。（测试这种情况，尽量使用命令行的方式运行）
+- `2、pyc文件不可以直接看到源码，可以被反编译`
+- 3、`pyc的内容，是跟python的版本相关的，不同 版本编译后的pyc文件是不同的，2.5编译的pyc文件，2.4版本的python是无法执行的` 
+
+##### python的编译执行
+
+当执行python时，在python解释器用四个过程分析代码，最终被CPU执行返回给用户
+
+1. 词法分析。例如用户键入关键字或者当输入关键字有误时，都会被分词分析所触发，不正确的代码将不会被执行。
+2. 语法分析。分析代码中的语法是否正确，有错则不会被执行
+3. 编译。生成.pyc字节码文件，python编译时会和上次生成的字节码文件进行比较，（.pyc的编译时间早于.py的修改时间，）如果不匹配则会将之前的字节码文件覆盖，以确保每次编译后字节码的准确性。**字节码是python虚拟机程序中对应的PyCodeObject对象，pyc文件是字节码在磁盘上的表现形式。简单来说就是在编译的过程中，首先将代码中的函数、类对对象分类处理，然后生成字节码。**
+4. 执行。有了字节码文件，CPU可以直接识别字节码文件进行处理，接着用python解释器执行即可。
+
+##### pyc文件的过期时间
+
+1. 在生成pyc文件的同时，写入一个Long型的变量，用于记录最近修改的时间
+2. 每次载入之前都先检查py文件和pyc文件的最后修改日期，如果不一致则会生成一个新的pyc文件。
+
+![1568014724704](D:\Pycharm_DCG\CY\docx\typora_img\1568014724704.png)
+
+## 小正数池（-5 到256）
+
+-5 到256在小整数池都是提前创建好的，每次拿来使用就好，都是同一个内存，
+
+但是在该范围外的，每次使用都是重新创建的一个新对象，
+
+**a, b = 257, 257 **,当a b在同一行使用相同的值初始化时，会执行同一个对象，如果不在同一行初始化，解释器就会知道已经存在了一个257对象，则会重新创建
+
+## 字符串驻留（intren机制，大整数池，针对字符串存储）
+
+**由于cpython在编译优化时，某些情况下会尝试使用已经存在的不可变对象，而不是每次都创建一个新的对象，该行为称为字符串的驻留**
+
+**字符串拼接时，不建议使用‘+’而是用join函数。join是先计算出全部字符串的长度，再逐一拷贝，仅仅创建一次对象。**
+
+### 发生驻留的的情况：
+
+1. 所有长度为0和长度为1的字符串都被驻留
+2. 字符串在编译时被实现。（'wtf' 将被驻留, 但是 ''.join(['w', 't', 'f'] 将不会被驻留）
+3. 字符串中只包含字母、数字或者下划线时将会被驻留。
+
+## 字典的键
+
+python字典通过检查**键值是否相等和比较哈希值**来确定两个键是否相同。
+
+如a[5]和a[5.0]是同一个键值对，因为5 == 5.0，hash(5) == hash(5.0)
+
+## try ... finally ...
+
+```python
+def some_func():
+   try:
+       return 'from_try'
+   except:
+        return 'except'
+   finally:
+       return 'from_finally'
+some_func() # 输出from_finally，
+# 由此可见try ... finally ...，try或者except中执行return break 或者continue后。finally依然会执行，返回值由最后执行的return语句决定
+```
+
+## class对象的创建销毁
+
+```python
+class WTF(object):
+    pass
+print(WTF() == WTF()) # False
+print(WTF() is WTF()) # Fasle
+print(hash(WTF()) == hash(WTF())) # True
+print(id(WTF()) == id(WTF())) # True
+'''
+前两个中，两个对象，后者是前者没有被销毁时创建的，因此不同，
+后两个，两对象，前者是后者被销毁后创建的，因为WTF()对象在执行完hash()或者id()后生命周期结束，被销毁。
+'''
+```
+
+## 生成器表达式的执行时机差异
+
+```python
+array = [1, 8, 12]
+g = (x for x in array if array.count() > 0)
+array = [2, 8, 13]
+print(list(g)) # [8]
+'''
+在生成器表达式中，in字句是在声明时执行的，而其他子句是在运行时执行的。
+声明时array 值还是[1, 8, 12]，后来被覆盖为[2, 8, 13]，在list(g)时执行arry.count() > 0等子句
+'''
+
+array_1 = [1,2,3,4]
+g1 = (x for x in array_1)
+array_1 = [1,2,3,4,5]
+
+array_2 = [1,2,3,4]
+g2 = (x for x in array_2)
+array_2[:] = [1,2,3,4,5]
+
+print(list(g1)) # [1,2,3,4]， in子句在声明时执行 [1,2,3,4]，array_1 = [1,2,3,4,5]处只是变量重新赋值，将array_1指向了存储[1,2,3,4,5]的内存空间
+
+print(list(g2)) # [1,2,3,4,5]， in子句在声明时执行 [1,2,3,4,5]，array_2[:] = [1,2,3,4,5]，将原来的array_2用切片的方式重新赋值，内存地址没变
+
+```
+
+## 用*创建可变类型的对象
+
+```python
+# 我们先初始化一个变量row
+row = [""]*3 #row i['', '', '']
+# 并创建一个变量board
+board = [row]*3
+
+board # [['', '', ''], ['', '', ''], ['', '', '']]
+board[0] # ['', '', '']
+board[0][0] = "X"
+board # [['X', '', ''], ['X', '', ''], ['X', '', '']]
+# board = [row]*3 用乘法创建，使得board中的三个列表元素其实是指向的同一个列表
+```
+
+### 解决
+
+不使用第三变量row以及 * 创建，使用循环
+
+```python
+# 创建一个变量board
+board = []
+for _ in range(3):
+    board.append([''] * 3)
+board[0][0] = "X"
+board # [['X', '', ''], ['', '', ''], ['', '', '']]
+# board = [row]*3 用乘法创建，使得board中的三个列表元素其实是指向的同一个列表
+```
+
+## a += 1、a = a + 1的区别
+
+此时1 ，整型是**不可变类型**，两者没什么差别，如是**可变类型**，如：
+
+**+=** 不重新创建对象，直接对原先存在的对象操作；
+
+后者是创建新对象，指向原先a+1后的值
+
+a += [1]、a = a + [1]，前者+=前后id(a)不变,后者应为创建了新的对象，id改变，但是不可变类型，两者都的id都改变
